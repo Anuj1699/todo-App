@@ -1,14 +1,15 @@
 import taskModel from './../models/taskModel.js';
 
 export const addTask = async (req, res, next) => {
-    const { title, description } = req.body;
-    if (!title || !description) {
+    const { formData, userRef } = req.body;
+    if (!formData.title || !formData.description) {
         return res.status(400).json({ message: "Enter All Field" });
     }
     try {
         const task = await taskModel.create({
-            title: title,
-            description: description
+            title: formData.title,
+            description: formData.description,
+            userRef: userRef
         });
         return res.status(201).json({message: "Task Created Sucessfully", task: task});
     } catch (error) {
@@ -41,6 +42,24 @@ export const deleteTask = async(req,res,next) => {
         }
         
         return res.status(201).json({message: "Deleted Sucessfully", task: taskDelete});
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const allTask = async(req,res,next) => {
+    const {id} = req.params;
+    if(!id){
+        return res.status(400).json({message: "Not Found"});
+    }
+
+    try {
+        const data = await taskModel.find({userRef: id});
+
+        if (data.length === 0) {
+            return res.status(404).json({ message: "No tasks found for the user" });
+        }
+        return res.status(201).json(data);
     } catch (error) {
         next(error);
     }

@@ -15,6 +15,10 @@ const taskSchema = new mongoose.Schema({
         type: String,
         enum: ["TODO", "IN PROGRESS", "COMPLETED"],
         default: "TODO"
+    },
+    userRef: {
+        type: String,
+        required: true
     }
 },{timestamps: true});
 
